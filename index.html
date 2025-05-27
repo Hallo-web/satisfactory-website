@@ -1,0 +1,179 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satisfactory Interactive Map</title>
+    <link rel="stylesheet" href="css/map.css">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+    <div class="app-container">
+        <header class="header">
+            <div class="header-content">
+                <div class="logo">
+                    <span class="logo-icon">🏭</span>
+                    <span class="logo-text">Satisfactory Map</span>
+                </div>
+                <nav class="nav-pills">
+                    <a href="index.html" class="nav-pill active">Map</a>
+                    <a href="kanban.html" class="nav-pill">Kanban</a>
+                    <a href="calculator.html" class="nav-pill">Calculator</a>
+                </nav>
+            </div>
+        </header>
+
+        <main class="main-content">
+            <div class="toolbar">
+                <div class="toolbar-section">
+                    <h3>Layers</h3>
+                    <div class="toggle-group">
+                        <button class="toggle-btn active" data-layer="resources" id="resourcesToggle">
+                            <span class="toggle-icon">⛏️</span>
+                            Resources
+                        </button>
+                        <button class="toggle-btn active" data-layer="powerslugs" id="powerslugsToggle">
+                            <span class="toggle-icon">⚡</span>
+                            Power Slugs
+                        </button>
+                        <button class="toggle-btn active" data-layer="players" id="playersToggle">
+                            <span class="toggle-icon">👤</span>
+                            Players
+                        </button>
+                        <button class="toggle-btn active" data-layer="structures" id="structuresToggle">
+                            <span class="toggle-icon">🏢</span>
+                            Structures
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar-section">
+                    <h3>Tools</h3>
+                    <div class="button-group">
+                        <button class="tool-btn" id="addMarkerBtn">
+                            <span class="btn-icon">📍</span>
+                            Add Marker
+                        </button>
+                        <button class="tool-btn" id="measureBtn">
+                            <span class="btn-icon">📏</span>
+                            Measure
+                        </button>
+                        <button class="tool-btn" id="uploadMapBtn">
+                            <span class="btn-icon">📁</span>
+                            Upload Map
+                        </button>
+                        <button class="tool-btn danger" id="clearBtn">
+                            <span class="btn-icon">🗑️</span>
+                            Clear All
+                        </button>
+                    </div>
+                </div>
+
+                <div class="toolbar-section">
+                    <h3>Coordinates</h3>
+                    <div class="coordinates">
+                        <span id="mouseCoords">X: 0, Y: 0</span>
+                    </div>
+                </div>
+            </div>
+
+            <div class="map-wrapper">
+                <div class="map-container" id="mapContainer">
+                    <div class="map-grid"></div>
+                    <canvas class="measurement-canvas" id="measurementCanvas"></canvas>
+                    
+                    <!-- Default markers -->
+                    <div class="marker resource-marker iron" style="left: 15%; top: 20%;" data-type="iron" data-id="iron-1" title="Pure Iron Node">
+                        <div class="marker-icon">Fe</div>
+                    </div>
+                    <div class="marker resource-marker copper" style="left: 25%; top: 30%;" data-type="copper" data-id="copper-1" title="Normal Copper Node">
+                        <div class="marker-icon">Cu</div>
+                    </div>
+                    <div class="marker resource-marker coal" style="left: 35%; top: 40%;" data-type="coal" data-id="coal-1" title="Pure Coal Node">
+                        <div class="marker-icon">C</div>
+                    </div>
+                    <div class="marker resource-marker oil" style="left: 45%; top: 50%;" data-type="oil" data-id="oil-1" title="Normal Oil Node">
+                        <div class="marker-icon">🛢️</div>
+                    </div>
+                    <div class="marker powerslug-marker" style="left: 55%; top: 25%;" data-type="powerslug" data-id="slug-1" title="Purple Power Slug">
+                        <div class="marker-icon">⚡</div>
+                    </div>
+                    <div class="marker player-marker" style="left: 50%; top: 60%;" data-type="player" data-id="player-1" title="Player Base">
+                        <div class="marker-icon">🏠</div>
+                    </div>
+                </div>
+
+                <div class="zoom-controls">
+                    <button class="zoom-btn" id="zoomInBtn">+</button>
+                    <button class="zoom-btn" id="zoomOutBtn">-</button>
+                    <button class="zoom-btn" id="resetZoomBtn">⌂</button>
+                </div>
+            </div>
+
+            <div class="info-panel" id="infoPanel">
+                <div class="info-header">
+                    <h3>Marker Details</h3>
+                    <button class="close-btn" id="closePanelBtn">×</button>
+                </div>
+                <div class="info-content" id="infoContent">
+                    <p>Click on a marker to see details</p>
+                </div>
+            </div>
+        </main>
+    </div>
+
+    <!-- Modal for adding markers -->
+    <div class="modal" id="markerModal">
+        <div class="modal-content">
+            <div class="modal-header">
+                <h3>Add New Marker</h3>
+                <button class="close-btn" id="closeModalBtn">×</button>
+            </div>
+            <div class="modal-body">
+                <div class="form-group">
+                    <label for="markerType">Type</label>
+                    <select id="markerType">
+                        <option value="iron">Iron Ore</option>
+                        <option value="copper">Copper Ore</option>
+                        <option value="coal">Coal</option>
+                        <option value="oil">Oil</option>
+                        <option value="limestone">Limestone</option>
+                        <option value="caterium">Caterium</option>
+                        <option value="sulfur">Sulfur</option>
+                        <option value="uranium">Uranium</option>
+                        <option value="powerslug">Power Slug</option>
+                        <option value="player">Player/Base</option>
+                        <option value="structure">Structure</option>
+                    </select>
+                </div>
+                <div class="form-group">
+                    <label for="markerTitle">Title</label>
+                    <input type="text" id="markerTitle" placeholder="Enter marker title">
+                </div>
+                <div class="form-group">
+                    <label for="markerDescription">Description</label>
+                    <textarea id="markerDescription" placeholder="Optional description"></textarea>
+                </div>
+                <div class="form-group" id="resourceGradeGroup" style="display: none;">
+                    <label for="resourceGrade">Resource Grade</label>
+                    <select id="resourceGrade">
+                        <option value="impure">Impure (30/min)</option>
+                        <option value="normal">Normal (60/min)</option>
+                        <option value="pure">Pure (120/min)</option>
+                    </select>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button class="btn secondary" id="cancelBtn">Cancel</button>
+                <button class="btn primary" id="saveMarkerBtn">Save Marker</button>
+            </div>
+        </div>
+    </div>
+
+    <input type="file" id="mapUpload" accept="image/*" style="display: none;">
+    
+    <script src="js/map.js"></script>
+</body>
+</html>
