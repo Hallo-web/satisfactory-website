@@ -3,177 +3,749 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satisfactory Interactive Map</title>
-    <link rel="stylesheet" href="css/map.css">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <title>Satisfactory Helper</title>
+    <style>
+        /* === CSS VARIABLES === */
+        :root {
+            --bg-primary: #1a1a1a;
+            --bg-secondary: #2a2a2a;
+            --bg-tertiary: #3a3a3a;
+            --text-primary: #ffffff;
+            --text-secondary: #cccccc;
+            --text-muted: #888888;
+            --accent-orange: #ff6b35;
+            --accent-blue: #4a9eff;
+            --accent-green: #4caf50;
+            --border-color: #444444;
+            --hover-bg: #404040;
+            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
+            --border-radius: 8px;
+            --transition: all 0.3s ease;
+        }
+
+        /* === GLOBAL STYLES === */
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Arial', sans-serif;
+            background-color: var(--bg-primary);
+            color: var(--text-primary);
+            line-height: 1.6;
+        }
+
+        /* === NAVIGATION === */
+        .nav-container {
+            background-color: var(--bg-secondary);
+            border-bottom: 2px solid var(--accent-orange);
+            box-shadow: var(--shadow);
+            position: fixed;
+            top: 0;
+            left: 0;
+            right: 0;
+            z-index: 1000;
+        }
+
+        .nav {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 1rem 2rem;
+        }
+
+        .nav-logo {
+            font-size: 1.5rem;
+            font-weight: bold;
+            color: var(--accent-orange);
+            text-decoration: none;
+        }
+
+        .nav-links {
+            display: flex;
+            gap: 2rem;
+            list-style: none;
+        }
+
+        .nav-link {
+            color: var(--text-secondary);
+            text-decoration: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .nav-link:hover,
+        .nav-link.active {
+            background-color: var(--hover-bg);
+            color: var(--text-primary);
+        }
+
+        .nav-link.active {
+            background-color: var(--accent-orange);
+        }
+
+        /* === MAIN CONTENT === */
+        .main-content {
+            margin-top: 80px;
+            padding: 2rem;
+            max-width: 1200px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+
+        .page {
+            display: none;
+        }
+
+        .page.active {
+            display: block;
+            animation: fadeIn 0.3s ease-in;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        /* === DASHBOARD STYLES === */
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 2rem;
+        }
+
+        .card {
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            border-radius: var(--border-radius);
+            padding: 1.5rem;
+            box-shadow: var(--shadow);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 0.5rem;
+            border-bottom: 1px solid var(--border-color);
+        }
+
+        .card-title {
+            font-size: 1.2rem;
+            color: var(--accent-orange);
+            font-weight: bold;
+        }
+
+        .btn {
+            background-color: var(--accent-blue);
+            color: white;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: var(--border-radius);
+            cursor: pointer;
+            transition: var(--transition);
+            font-size: 0.9rem;
+        }
+
+        .btn:hover {
+            background-color: #3a8eef;
+            transform: translateY(-1px);
+        }
+
+        .btn-small {
+            padding: 0.25rem 0.5rem;
+            font-size: 0.8rem;
+        }
+
+        .btn-danger {
+            background-color: #f44336;
+        }
+
+        .btn-danger:hover {
+            background-color: #d32f2f;
+        }
+
+        /* === RESOURCE TRACKER === */
+        .resource-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+            gap: 1rem;
+        }
+
+        .resource-item {
+            background-color: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            text-align: center;
+            transition: var(--transition);
+        }
+
+        .resource-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .resource-name {
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+            color: var(--text-secondary);
+        }
+
+        .resource-amount {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: var(--accent-blue);
+        }
+
+        .resource-amount input {
+            background: transparent;
+            border: none;
+            color: var(--accent-blue);
+            font-size: 1.2rem;
+            font-weight: bold;
+            text-align: center;
+            width: 100%;
+        }
+
+        .resource-amount input:focus {
+            outline: 1px solid var(--accent-orange);
+            border-radius: 4px;
+        }
+
+        /* === TODO LIST === */
+        .todo-input-container {
+            display: flex;
+            gap: 0.5rem;
+            margin-bottom: 1rem;
+        }
+
+        .todo-input {
+            flex: 1;
+            background-color: var(--bg-tertiary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+        }
+
+        .todo-input:focus {
+            outline: none;
+            border-color: var(--accent-orange);
+        }
+
+        .todo-list {
+            list-style: none;
+            max-height: 300px;
+            overflow-y: auto;
+        }
+
+        .todo-item {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            background-color: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            transition: var(--transition);
+        }
+
+        .todo-item:hover {
+            background-color: var(--hover-bg);
+        }
+
+        .todo-item.completed {
+            opacity: 0.6;
+            text-decoration: line-through;
+        }
+
+        .todo-text {
+            flex: 1;
+            margin-left: 0.5rem;
+        }
+
+        .todo-actions {
+            display: flex;
+            gap: 0.5rem;
+        }
+
+        /* === KANBAN BOARD === */
+        .kanban-board {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1rem;
+            margin-top: 1rem;
+        }
+
+        .kanban-column {
+            background-color: var(--bg-tertiary);
+            border-radius: var(--border-radius);
+            padding: 1rem;
+            min-height: 300px;
+        }
+
+        .kanban-header {
+            text-align: center;
+            padding: 0.5rem;
+            margin-bottom: 1rem;
+            border-radius: var(--border-radius);
+            font-weight: bold;
+        }
+
+        .kanban-ideas { background-color: var(--accent-blue); }
+        .kanban-progress { background-color: var(--accent-orange); }
+        .kanban-done { background-color: var(--accent-green); }
+
+        .kanban-item {
+            background-color: var(--bg-secondary);
+            padding: 0.75rem;
+            margin-bottom: 0.5rem;
+            border-radius: var(--border-radius);
+            cursor: grab;
+            transition: var(--transition);
+        }
+
+        .kanban-item:hover {
+            transform: translateY(-2px);
+            box-shadow: var(--shadow);
+        }
+
+        .kanban-item.dragging {
+            opacity: 0.5;
+        }
+
+        .kanban-add-input {
+            width: 100%;
+            background-color: var(--bg-secondary);
+            border: 1px solid var(--border-color);
+            color: var(--text-primary);
+            padding: 0.5rem;
+            border-radius: var(--border-radius);
+            margin-top: 0.5rem;
+        }
+
+        /* === RESPONSIVE DESIGN === */
+        @media (max-width: 768px) {
+            .nav {
+                flex-direction: column;
+                padding: 1rem;
+            }
+
+            .nav-links {
+                margin-top: 1rem;
+                gap: 1rem;
+            }
+
+            .main-content {
+                margin-top: 120px;
+                padding: 1rem;
+            }
+
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .resource-grid {
+                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
+            }
+
+            .kanban-board {
+                grid-template-columns: 1fr;
+            }
+        }
+
+        /* === UTILITY CLASSES === */
+        .text-center { text-align: center; }
+        .mb-1 { margin-bottom: 1rem; }
+        .mt-1 { margin-top: 1rem; }
+        .hidden { display: none; }
+        .loading { opacity: 0.6; pointer-events: none; }
+    </style>
 </head>
 <body>
-    <div class="app-container">
-        <header class="header">
-            <div class="header-content">
-                <div class="logo">
-                    <span class="logo-icon">🏭</span>
-                    <span class="logo-text">Satisfactory Map</span>
-                </div>
-                <nav class="nav-pills">
-                    <a href="index.html" class="nav-pill active">Map</a>
-                    <a href="kanban.html" class="nav-pill">Kanban</a>
-                    <a href="calculator.html" class="nav-pill">Calculator</a>
-                </nav>
-            </div>
-        </header>
+<!-- Navigation -->
+<div class="nav-container">
+    <nav class="nav">
+        <a href="#" class="nav-logo" onclick="showPage('dashboard')">Satisfactory Helper</a>
+        <ul class="nav-links">
+            <li><a href="#" class="nav-link active" onclick="showPage('dashboard')" data-page="dashboard">Dashboard</a></li>
+            <li><a href="#" class="nav-link" onclick="showPage('calculator')" data-page="calculator">Calculator</a></li>
+            <li><a href="#" class="nav-link" onclick="showPage('devices')" data-page="devices">Devices</a></li>
+            <li><a href="#" class="nav-link" onclick="showPage('map')" data-page="map">Map</a></li>
+        </ul>
+    </nav>
+</div>
 
-        <main class="main-content">
-            <div class="toolbar">
-                <div class="toolbar-section">
-                    <h3>Layers</h3>
-                    <div class="toggle-group">
-                        <button class="toggle-btn active" data-layer="resources" id="resourcesToggle">
-                            <span class="toggle-icon">⛏️</span>
-                            Resources
-                        </button>
-                        <button class="toggle-btn active" data-layer="powerslugs" id="powerslugsToggle">
-                            <span class="toggle-icon">⚡</span>
-                            Power Slugs
-                        </button>
-                        <button class="toggle-btn active" data-layer="players" id="playersToggle">
-                            <span class="toggle-icon">👤</span>
-                            Players
-                        </button>
-                        <button class="toggle-btn active" data-layer="structures" id="structuresToggle">
-                            <span class="toggle-icon">🏢</span>
-                            Structures
-                        </button>
-                    </div>
-                </div>
+<!-- Main Content -->
+<div class="main-content">
+    <!-- Dashboard Page -->
+    <div id="dashboard" class="page active">
+        <h1 class="text-center mb-1">Dashboard</h1>
 
-                <div class="toolbar-section">
-                    <h3>Tools</h3>
-                    <div class="button-group">
-                        <button class="tool-btn" id="addMarkerBtn">
-                            <span class="btn-icon">📍</span>
-                            Add Marker
-                        </button>
-                        <button class="tool-btn" id="measureBtn">
-                            <span class="btn-icon">📏</span>
-                            Measure
-                        </button>
-                        <button class="tool-btn" id="uploadMapBtn">
-                            <span class="btn-icon">📁</span>
-                            Upload Map
-                        </button>
-                        <button class="tool-btn danger" id="clearBtn">
-                            <span class="btn-icon">🗑️</span>
-                            Clear All
-                        </button>
-                    </div>
+        <div class="dashboard-grid">
+            <!-- Resource Tracker -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Resource Tracker</h2>
+                    <button class="btn btn-small" onclick="resetResources()">Reset All</button>
                 </div>
-
-                <div class="toolbar-section">
-                    <h3>Coordinates</h3>
-                    <div class="coordinates">
-                        <span id="mouseCoords">X: 0, Y: 0</span>
-                    </div>
+                <div class="resource-grid" id="resourceGrid">
+                    <!-- Resources will be dynamically loaded here -->
                 </div>
             </div>
 
-            <div class="map-wrapper">
-                <div class="map-container" id="mapContainer">
-                    <div class="map-grid"></div>
-                    <canvas class="measurement-canvas" id="measurementCanvas"></canvas>
-                    
-                    <!-- Default markers -->
-                    <div class="marker resource-marker iron" style="left: 15%; top: 20%;" data-type="iron" data-id="iron-1" title="Pure Iron Node">
-                        <div class="marker-icon">Fe</div>
-                    </div>
-                    <div class="marker resource-marker copper" style="left: 25%; top: 30%;" data-type="copper" data-id="copper-1" title="Normal Copper Node">
-                        <div class="marker-icon">Cu</div>
-                    </div>
-                    <div class="marker resource-marker coal" style="left: 35%; top: 40%;" data-type="coal" data-id="coal-1" title="Pure Coal Node">
-                        <div class="marker-icon">C</div>
-                    </div>
-                    <div class="marker resource-marker oil" style="left: 45%; top: 50%;" data-type="oil" data-id="oil-1" title="Normal Oil Node">
-                        <div class="marker-icon">🛢️</div>
-                    </div>
-                    <div class="marker powerslug-marker" style="left: 55%; top: 25%;" data-type="powerslug" data-id="slug-1" title="Purple Power Slug">
-                        <div class="marker-icon">⚡</div>
-                    </div>
-                    <div class="marker player-marker" style="left: 50%; top: 60%;" data-type="player" data-id="player-1" title="Player Base">
-                        <div class="marker-icon">🏠</div>
-                    </div>
+            <!-- Todo List -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Todo List</h2>
+                    <span id="todoCount">0 tasks</span>
                 </div>
-
-                <div class="zoom-controls">
-                    <button class="zoom-btn" id="zoomInBtn">+</button>
-                    <button class="zoom-btn" id="zoomOutBtn">-</button>
-                    <button class="zoom-btn" id="resetZoomBtn">⌂</button>
+                <div class="todo-input-container">
+                    <input type="text" class="todo-input" id="todoInput" placeholder="Add a new task..." onkeypress="handleTodoKeyPress(event)">
+                    <button class="btn" onclick="addTodo()">Add</button>
                 </div>
+                <ul class="todo-list" id="todoList">
+                    <!-- Todos will be dynamically loaded here -->
+                </ul>
             </div>
 
-            <div class="info-panel" id="infoPanel">
-                <div class="info-header">
-                    <h3>Marker Details</h3>
-                    <button class="close-btn" id="closePanelBtn">×</button>
+            <!-- Quick Navigation -->
+            <div class="card">
+                <div class="card-header">
+                    <h2 class="card-title">Quick Access</h2>
                 </div>
-                <div class="info-content" id="infoContent">
-                    <p>Click on a marker to see details</p>
+                <div style="display: grid; gap: 1rem;">
+                    <button class="btn" onclick="showPage('calculator')">Production Calculator</button>
+                    <button class="btn" onclick="showPage('devices')">Device Database</button>
+                    <button class="btn" onclick="showPage('map')">Interactive Map</button>
                 </div>
             </div>
-        </main>
-    </div>
+        </div>
 
-    <!-- Modal for adding markers -->
-    <div class="modal" id="markerModal">
-        <div class="modal-content">
-            <div class="modal-header">
-                <h3>Add New Marker</h3>
-                <button class="close-btn" id="closeModalBtn">×</button>
+        <!-- Kanban Board -->
+        <div class="card">
+            <div class="card-header">
+                <h2 class="card-title">Project Board</h2>
             </div>
-            <div class="modal-body">
-                <div class="form-group">
-                    <label for="markerType">Type</label>
-                    <select id="markerType">
-                        <option value="iron">Iron Ore</option>
-                        <option value="copper">Copper Ore</option>
-                        <option value="coal">Coal</option>
-                        <option value="oil">Oil</option>
-                        <option value="limestone">Limestone</option>
-                        <option value="caterium">Caterium</option>
-                        <option value="sulfur">Sulfur</option>
-                        <option value="uranium">Uranium</option>
-                        <option value="powerslug">Power Slug</option>
-                        <option value="player">Player/Base</option>
-                        <option value="structure">Structure</option>
-                    </select>
+            <div class="kanban-board">
+                <div class="kanban-column">
+                    <div class="kanban-header kanban-ideas">Ideas</div>
+                    <div class="kanban-items" id="kanban-ideas" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Kanban items will be dynamically loaded here -->
+                    </div>
+                    <input type="text" class="kanban-add-input" placeholder="Add idea..." onkeypress="handleKanbanKeyPress(event, 'ideas')">
                 </div>
-                <div class="form-group">
-                    <label for="markerTitle">Title</label>
-                    <input type="text" id="markerTitle" placeholder="Enter marker title">
+                <div class="kanban-column">
+                    <div class="kanban-header kanban-progress">In Progress</div>
+                    <div class="kanban-items" id="kanban-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Kanban items will be dynamically loaded here -->
+                    </div>
+                    <input type="text" class="kanban-add-input" placeholder="Add task..." onkeypress="handleKanbanKeyPress(event, 'progress')">
                 </div>
-                <div class="form-group">
-                    <label for="markerDescription">Description</label>
-                    <textarea id="markerDescription" placeholder="Optional description"></textarea>
+                <div class="kanban-column">
+                    <div class="kanban-header kanban-done">Done</div>
+                    <div class="kanban-items" id="kanban-done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                        <!-- Kanban items will be dynamically loaded here -->
+                    </div>
+                    <input type="text" class="kanban-add-input" placeholder="Add completed..." onkeypress="handleKanbanKeyPress(event, 'done')">
                 </div>
-                <div class="form-group" id="resourceGradeGroup" style="display: none;">
-                    <label for="resourceGrade">Resource Grade</label>
-                    <select id="resourceGrade">
-                        <option value="impure">Impure (30/min)</option>
-                        <option value="normal">Normal (60/min)</option>
-                        <option value="pure">Pure (120/min)</option>
-                    </select>
-                </div>
-            </div>
-            <div class="modal-footer">
-                <button class="btn secondary" id="cancelBtn">Cancel</button>
-                <button class="btn primary" id="saveMarkerBtn">Save Marker</button>
             </div>
         </div>
     </div>
 
-    <input type="file" id="mapUpload" accept="image/*" style="display: none;">
-    
-    <script src="js/map.js"></script>
+    <!-- Calculator Page (Placeholder) -->
+    <div id="calculator" class="page">
+        <h1 class="text-center">Production Calculator</h1>
+        <div class="card">
+            <p class="text-center">Calculator functionality coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Devices Page (Placeholder) -->
+    <div id="devices" class="page">
+        <h1 class="text-center">Device Database</h1>
+        <div class="card">
+            <p class="text-center">Device database coming soon...</p>
+        </div>
+    </div>
+
+    <!-- Map Page (Placeholder) -->
+    <div id="map" class="page">
+        <h1 class="text-center">Interactive Map</h1>
+        <div class="card">
+            <p class="text-center">Interactive map coming soon...</p>
+        </div>
+    </div>
+</div>
+
+<script>
+    // === GLOBAL STATE ===
+    let appState = {
+        resources: {},
+        todos: [],
+        kanbanItems: {
+            ideas: [],
+            progress: [],
+            done: []
+        }
+    };
+
+    // === BASIC SATISFACTORY RESOURCES ===
+    const BASIC_RESOURCES = [
+        'Iron Ore', 'Copper Ore', 'Limestone', 'Coal', 'Oil', 'Caterium Ore',
+        'Raw Quartz', 'Sulfur', 'Bauxite', 'Uranium', 'Iron Ingot', 'Copper Ingot',
+        'Steel Ingot', 'Aluminum Ingot', 'Concrete', 'Wire', 'Cable', 'Iron Plate',
+        'Iron Rod', 'Screw', 'Reinforced Iron Plate', 'Rotor', 'Modular Frame',
+        'Smart Plating', 'Versatile Framework', 'Automated Wiring'
+    ];
+
+    // === NAVIGATION ===
+    function showPage(pageId) {
+        // Hide all pages
+        document.querySelectorAll('.page').forEach(page => {
+            page.classList.remove('active');
+        });
+
+        // Show selected page
+        document.getElementById(pageId).classList.add('active');
+
+        // Update navigation
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.classList.remove('active');
+        });
+        document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
+    }
+
+    // === RESOURCE TRACKER ===
+    function initializeResources() {
+        const resourceGrid = document.getElementById('resourceGrid');
+        resourceGrid.innerHTML = '';
+
+        BASIC_RESOURCES.forEach(resource => {
+            if (!appState.resources[resource]) {
+                appState.resources[resource] = 0;
+            }
+
+            const resourceItem = document.createElement('div');
+            resourceItem.className = 'resource-item';
+            resourceItem.innerHTML = `
+                    <div class="resource-name">${resource}</div>
+                    <div class="resource-amount">
+                        <input type="number" value="${appState.resources[resource]}"
+                               onchange="updateResource('${resource}', this.value)"
+                               onclick="this.select()">
+                    </div>
+                `;
+            resourceGrid.appendChild(resourceItem);
+        });
+    }
+
+    function updateResource(resourceName, amount) {
+        appState.resources[resourceName] = parseInt(amount) || 0;
+        saveData();
+    }
+
+    function resetResources() {
+        if (confirm('Are you sure you want to reset all resource amounts?')) {
+            Object.keys(appState.resources).forEach(resource => {
+                appState.resources[resource] = 0;
+            });
+            initializeResources();
+            saveData();
+        }
+    }
+
+    // === TODO LIST ===
+    function addTodo() {
+        const input = document.getElementById('todoInput');
+        const text = input.value.trim();
+
+        if (text) {
+            const todo = {
+                id: Date.now(),
+                text: text,
+                completed: false,
+                createdAt: new Date().toISOString()
+            };
+
+            appState.todos.unshift(todo);
+            input.value = '';
+            renderTodos();
+            saveData();
+        }
+    }
+
+    function handleTodoKeyPress(event) {
+        if (event.key === 'Enter') {
+            addTodo();
+        }
+    }
+
+    function toggleTodo(id) {
+        const todo = appState.todos.find(t => t.id === id);
+        if (todo) {
+            todo.completed = !todo.completed;
+            renderTodos();
+            saveData();
+        }
+    }
+
+    function deleteTodo(id) {
+        appState.todos = appState.todos.filter(t => t.id !== id);
+        renderTodos();
+        saveData();
+    }
+
+    function renderTodos() {
+        const todoList = document.getElementById('todoList');
+        const todoCount = document.getElementById('todoCount');
+
+        todoList.innerHTML = '';
+        const activeTodos = appState.todos.filter(t => !t.completed).length;
+        todoCount.textContent = `${activeTodos} active tasks`;
+
+        appState.todos.forEach(todo => {
+            const todoItem = document.createElement('li');
+            todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
+            todoItem.innerHTML = `
+                    <input type="checkbox" ${todo.completed ? 'checked' : ''}
+                           onchange="toggleTodo(${todo.id})">
+                    <span class="todo-text">${todo.text}</span>
+                    <div class="todo-actions">
+                        <button class="btn btn-small btn-danger" onclick="deleteTodo(${todo.id})">Delete</button>
+                    </div>
+                `;
+            todoList.appendChild(todoItem);
+        });
+    }
+
+    // === KANBAN BOARD ===
+    function addKanbanItem(column, text) {
+        if (text.trim()) {
+            const item = {
+                id: Date.now(),
+                text: text.trim(),
+                column: column,
+                createdAt: new Date().toISOString()
+            };
+
+            appState.kanbanItems[column].push(item);
+            renderKanban();
+            saveData();
+        }
+    }
+
+    function handleKanbanKeyPress(event, column) {
+        if (event.key === 'Enter') {
+            addKanbanItem(column, event.target.value);
+            event.target.value = '';
+        }
+    }
+
+    function renderKanban() {
+        Object.keys(appState.kanbanItems).forEach(column => {
+            const container = document.getElementById(`kanban-${column}`);
+            container.innerHTML = '';
+
+            appState.kanbanItems[column].forEach(item => {
+                const itemElement = document.createElement('div');
+                itemElement.className = 'kanban-item';
+                itemElement.draggable = true;
+                itemElement.dataset.itemId = item.id;
+                itemElement.dataset.column = column;
+                itemElement.innerHTML = `
+                        ${item.text}
+                        <button class="btn btn-small btn-danger" style="float: right; margin-top: 0.5rem;"
+                                onclick="deleteKanbanItem('${column}', ${item.id})">×</button>
+                    `;
+                itemElement.addEventListener('dragstart', dragStart);
+                container.appendChild(itemElement);
+            });
+        });
+    }
+
+    function deleteKanbanItem(column, id) {
+        appState.kanbanItems[column] = appState.kanbanItems[column].filter(item => item.id !== id);
+        renderKanban();
+        saveData();
+    }
+
+    // === DRAG AND DROP ===
+    let draggedItem = null;
+
+    function dragStart(event) {
+        draggedItem = event.target;
+        event.target.classList.add('dragging');
+    }
+
+    function allowDrop(event) {
+        event.preventDefault();
+    }
+
+    function drop(event) {
+        event.preventDefault();
+
+        if (draggedItem) {
+            const targetColumn = event.currentTarget.id.replace('kanban-', '');
+            const sourceColumn = draggedItem.dataset.column;
+            const itemId = parseInt(draggedItem.dataset.itemId);
+
+            if (sourceColumn !== targetColumn) {
+                // Find and move the item
+                const itemIndex = appState.kanbanItems[sourceColumn].findIndex(item => item.id === itemId);
+                if (itemIndex !== -1) {
+                    const item = appState.kanbanItems[sourceColumn].splice(itemIndex, 1)[0];
+                    item.column = targetColumn;
+                    appState.kanbanItems[targetColumn].push(item);
+
+                    renderKanban();
+                    saveData();
+                }
+            }
+
+            draggedItem.classList.remove('dragging');
+            draggedItem = null;
+        }
+    }
+
+    // === DATA PERSISTENCE ===
+    function saveData() {
+        try {
+            const data = JSON.stringify(appState);
+            // Note: Using a simple object storage since localStorage isn't available
+            window.appData = data;
+        } catch (error) {
+            console.warn('Could not save data:', error);
+        }
+    }
+
+    function loadData() {
+        try {
+            if (window.appData) {
+                const loaded = JSON.parse(window.appData);
+                appState = { ...appState, ...loaded };
+            }
+        } catch (error) {
+            console.warn('Could not load data:', error);
+        }
+    }
+
+    // === INITIALIZATION ===
+    function initializeApp() {
+        loadData();
+        initializeResources();
+        renderTodos();
+        renderKanban();
+    }
+
+    // Initialize the app when the page loads
+    document.addEventListener('DOMContentLoaded', initializeApp);
+</script>
 </body>
 </html>
