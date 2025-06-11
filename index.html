@@ -3,749 +3,160 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Satisfactory Helper</title>
-    <style>
-        /* === CSS VARIABLES === */
-        :root {
-            --bg-primary: #1a1a1a;
-            --bg-secondary: #2a2a2a;
-            --bg-tertiary: #3a3a3a;
-            --text-primary: #ffffff;
-            --text-secondary: #cccccc;
-            --text-muted: #888888;
-            --accent-orange: #ff6b35;
-            --accent-blue: #4a9eff;
-            --accent-green: #4caf50;
-            --border-color: #444444;
-            --hover-bg: #404040;
-            --shadow: 0 2px 8px rgba(0, 0, 0, 0.3);
-            --border-radius: 8px;
-            --transition: all 0.3s ease;
-        }
-
-        /* === GLOBAL STYLES === */
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        body {
-            font-family: 'Arial', sans-serif;
-            background-color: var(--bg-primary);
-            color: var(--text-primary);
-            line-height: 1.6;
-        }
-
-        /* === NAVIGATION === */
-        .nav-container {
-            background-color: var(--bg-secondary);
-            border-bottom: 2px solid var(--accent-orange);
-            box-shadow: var(--shadow);
-            position: fixed;
-            top: 0;
-            left: 0;
-            right: 0;
-            z-index: 1000;
-        }
-
-        .nav {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 1rem 2rem;
-        }
-
-        .nav-logo {
-            font-size: 1.5rem;
-            font-weight: bold;
-            color: var(--accent-orange);
-            text-decoration: none;
-        }
-
-        .nav-links {
-            display: flex;
-            gap: 2rem;
-            list-style: none;
-        }
-
-        .nav-link {
-            color: var(--text-secondary);
-            text-decoration: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .nav-link:hover,
-        .nav-link.active {
-            background-color: var(--hover-bg);
-            color: var(--text-primary);
-        }
-
-        .nav-link.active {
-            background-color: var(--accent-orange);
-        }
-
-        /* === MAIN CONTENT === */
-        .main-content {
-            margin-top: 80px;
-            padding: 2rem;
-            max-width: 1200px;
-            margin-left: auto;
-            margin-right: auto;
-        }
-
-        .page {
-            display: none;
-        }
-
-        .page.active {
-            display: block;
-            animation: fadeIn 0.3s ease-in;
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-
-        /* === DASHBOARD STYLES === */
-        .dashboard-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-            gap: 2rem;
-            margin-bottom: 2rem;
-        }
-
-        .card {
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            border-radius: var(--border-radius);
-            padding: 1.5rem;
-            box-shadow: var(--shadow);
-        }
-
-        .card-header {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            margin-bottom: 1rem;
-            padding-bottom: 0.5rem;
-            border-bottom: 1px solid var(--border-color);
-        }
-
-        .card-title {
-            font-size: 1.2rem;
-            color: var(--accent-orange);
-            font-weight: bold;
-        }
-
-        .btn {
-            background-color: var(--accent-blue);
-            color: white;
-            border: none;
-            padding: 0.5rem 1rem;
-            border-radius: var(--border-radius);
-            cursor: pointer;
-            transition: var(--transition);
-            font-size: 0.9rem;
-        }
-
-        .btn:hover {
-            background-color: #3a8eef;
-            transform: translateY(-1px);
-        }
-
-        .btn-small {
-            padding: 0.25rem 0.5rem;
-            font-size: 0.8rem;
-        }
-
-        .btn-danger {
-            background-color: #f44336;
-        }
-
-        .btn-danger:hover {
-            background-color: #d32f2f;
-        }
-
-        /* === RESOURCE TRACKER === */
-        .resource-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
-            gap: 1rem;
-        }
-
-        .resource-item {
-            background-color: var(--bg-tertiary);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            text-align: center;
-            transition: var(--transition);
-        }
-
-        .resource-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .resource-name {
-            font-size: 0.9rem;
-            margin-bottom: 0.5rem;
-            color: var(--text-secondary);
-        }
-
-        .resource-amount {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: var(--accent-blue);
-        }
-
-        .resource-amount input {
-            background: transparent;
-            border: none;
-            color: var(--accent-blue);
-            font-size: 1.2rem;
-            font-weight: bold;
-            text-align: center;
-            width: 100%;
-        }
-
-        .resource-amount input:focus {
-            outline: 1px solid var(--accent-orange);
-            border-radius: 4px;
-        }
-
-        /* === TODO LIST === */
-        .todo-input-container {
-            display: flex;
-            gap: 0.5rem;
-            margin-bottom: 1rem;
-        }
-
-        .todo-input {
-            flex: 1;
-            background-color: var(--bg-tertiary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: var(--border-radius);
-        }
-
-        .todo-input:focus {
-            outline: none;
-            border-color: var(--accent-orange);
-        }
-
-        .todo-list {
-            list-style: none;
-            max-height: 300px;
-            overflow-y: auto;
-        }
-
-        .todo-item {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            background-color: var(--bg-tertiary);
-            border-radius: var(--border-radius);
-            transition: var(--transition);
-        }
-
-        .todo-item:hover {
-            background-color: var(--hover-bg);
-        }
-
-        .todo-item.completed {
-            opacity: 0.6;
-            text-decoration: line-through;
-        }
-
-        .todo-text {
-            flex: 1;
-            margin-left: 0.5rem;
-        }
-
-        .todo-actions {
-            display: flex;
-            gap: 0.5rem;
-        }
-
-        /* === KANBAN BOARD === */
-        .kanban-board {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1rem;
-            margin-top: 1rem;
-        }
-
-        .kanban-column {
-            background-color: var(--bg-tertiary);
-            border-radius: var(--border-radius);
-            padding: 1rem;
-            min-height: 300px;
-        }
-
-        .kanban-header {
-            text-align: center;
-            padding: 0.5rem;
-            margin-bottom: 1rem;
-            border-radius: var(--border-radius);
-            font-weight: bold;
-        }
-
-        .kanban-ideas { background-color: var(--accent-blue); }
-        .kanban-progress { background-color: var(--accent-orange); }
-        .kanban-done { background-color: var(--accent-green); }
-
-        .kanban-item {
-            background-color: var(--bg-secondary);
-            padding: 0.75rem;
-            margin-bottom: 0.5rem;
-            border-radius: var(--border-radius);
-            cursor: grab;
-            transition: var(--transition);
-        }
-
-        .kanban-item:hover {
-            transform: translateY(-2px);
-            box-shadow: var(--shadow);
-        }
-
-        .kanban-item.dragging {
-            opacity: 0.5;
-        }
-
-        .kanban-add-input {
-            width: 100%;
-            background-color: var(--bg-secondary);
-            border: 1px solid var(--border-color);
-            color: var(--text-primary);
-            padding: 0.5rem;
-            border-radius: var(--border-radius);
-            margin-top: 0.5rem;
-        }
-
-        /* === RESPONSIVE DESIGN === */
-        @media (max-width: 768px) {
-            .nav {
-                flex-direction: column;
-                padding: 1rem;
-            }
-
-            .nav-links {
-                margin-top: 1rem;
-                gap: 1rem;
-            }
-
-            .main-content {
-                margin-top: 120px;
-                padding: 1rem;
-            }
-
-            .dashboard-grid {
-                grid-template-columns: 1fr;
-            }
-
-            .resource-grid {
-                grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-            }
-
-            .kanban-board {
-                grid-template-columns: 1fr;
-            }
-        }
-
-        /* === UTILITY CLASSES === */
-        .text-center { text-align: center; }
-        .mb-1 { margin-bottom: 1rem; }
-        .mt-1 { margin-top: 1rem; }
-        .hidden { display: none; }
-        .loading { opacity: 0.6; pointer-events: none; }
-    </style>
+    <title>Satisfactory Helper - Dashboard</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
 </head>
 <body>
 <!-- Navigation -->
-<div class="nav-container">
-    <nav class="nav">
-        <a href="#" class="nav-logo" onclick="showPage('dashboard')">Satisfactory Helper</a>
-        <ul class="nav-links">
-            <li><a href="#" class="nav-link active" onclick="showPage('dashboard')" data-page="dashboard">Dashboard</a></li>
-            <li><a href="#" class="nav-link" onclick="showPage('calculator')" data-page="calculator">Calculator</a></li>
-            <li><a href="#" class="nav-link" onclick="showPage('devices')" data-page="devices">Devices</a></li>
-            <li><a href="#" class="nav-link" onclick="showPage('map')" data-page="map">Map</a></li>
+<nav class="nav">
+    <div class="nav__container">
+        <a href="index.html" class="nav__logo">
+            <span class="nav__logo-icon">⚙️</span>
+            Satisfactory Helper
+        </a>
+        <ul class="nav__links">
+            <li><a href="index.html" class="nav__link nav__link--active">Dashboard</a></li>
+            <li><a href="calculator.html" class="nav__link">Calculator</a></li>
+            <li><a href="map.html" class="nav__link">Map</a></li>
         </ul>
-    </nav>
-</div>
+    </div>
+</nav>
 
 <!-- Main Content -->
-<div class="main-content">
-    <!-- Dashboard Page -->
-    <div id="dashboard" class="page active">
-        <h1 class="text-center mb-1">Dashboard</h1>
+<main class="main">
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Dashboard</h1>
+            <p class="page-subtitle">Manage your Satisfactory factory and projects</p>
+        </header>
 
-        <div class="dashboard-grid">
-            <!-- Resource Tracker -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Resource Tracker</h2>
-                    <button class="btn btn-small" onclick="resetResources()">Reset All</button>
-                </div>
-                <div class="resource-grid" id="resourceGrid">
-                    <!-- Resources will be dynamically loaded here -->
-                </div>
+        <!-- Dashboard Overview -->
+        <section class="dashboard__overview">
+            <div class="card dashboard__stat-card">
+                <div class="dashboard__stat-number" id="totalResources">0</div>
+                <div class="dashboard__stat-label">Total Resources</div>
             </div>
+            <div class="card dashboard__stat-card">
+                <div class="dashboard__stat-number" id="activeTasks">0</div>
+                <div class="dashboard__stat-label">Active Tasks</div>
+            </div>
+            <div class="card dashboard__stat-card">
+                <div class="dashboard__stat-number" id="projectsInProgress">0</div>
+                <div class="dashboard__stat-label">Projects In Progress</div>
+            </div>
+            <div class="card dashboard__stat-card">
+                <div class="dashboard__stat-number" id="completedProjects">0</div>
+                <div class="dashboard__stat-label">Completed Projects</div>
+            </div>
+        </section>
 
-            <!-- Todo List -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Todo List</h2>
-                    <span id="todoCount">0 tasks</span>
-                </div>
-                <div class="todo-input-container">
-                    <input type="text" class="todo-input" id="todoInput" placeholder="Add a new task..." onkeypress="handleTodoKeyPress(event)">
-                    <button class="btn" onclick="addTodo()">Add</button>
-                </div>
-                <ul class="todo-list" id="todoList">
-                    <!-- Todos will be dynamically loaded here -->
-                </ul>
-            </div>
-
-            <!-- Quick Navigation -->
-            <div class="card">
-                <div class="card-header">
-                    <h2 class="card-title">Quick Access</h2>
-                </div>
-                <div style="display: grid; gap: 1rem;">
-                    <button class="btn" onclick="showPage('calculator')">Production Calculator</button>
-                    <button class="btn" onclick="showPage('devices')">Device Database</button>
-                    <button class="btn" onclick="showPage('map')">Interactive Map</button>
-                </div>
-            </div>
-        </div>
-
-        <!-- Kanban Board -->
-        <div class="card">
-            <div class="card-header">
-                <h2 class="card-title">Project Board</h2>
-            </div>
-            <div class="kanban-board">
-                <div class="kanban-column">
-                    <div class="kanban-header kanban-ideas">Ideas</div>
-                    <div class="kanban-items" id="kanban-ideas" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <!-- Kanban items will be dynamically loaded here -->
+        <!-- Main Dashboard Content -->
+        <section class="dashboard__main-content">
+            <div class="dashboard__primary">
+                <!-- Resource Tracker -->
+                <div class="card resource-tracker">
+                    <header class="resource-tracker__header">
+                        <h2 class="card__title">Resource Tracker</h2>
+                        <div class="resource-tracker__controls">
+                            <button class="btn btn--secondary btn--sm" onclick="resetResources()">Reset All</button>
+                            <button class="btn btn--primary btn--sm" onclick="exportResources()">Export</button>
+                        </div>
+                    </header>
+                    <div class="resource-grid" id="resourceGrid">
+                        <!-- Resources will be dynamically loaded here -->
                     </div>
-                    <input type="text" class="kanban-add-input" placeholder="Add idea..." onkeypress="handleKanbanKeyPress(event, 'ideas')">
                 </div>
-                <div class="kanban-column">
-                    <div class="kanban-header kanban-progress">In Progress</div>
-                    <div class="kanban-items" id="kanban-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <!-- Kanban items will be dynamically loaded here -->
+
+                <!-- Kanban Board -->
+                <div class="card">
+                    <header class="card__header">
+                        <h2 class="card__title">Project Board</h2>
+                    </header>
+                    <div class="kanban-board">
+                        <div class="kanban-column">
+                            <header class="kanban-column__header">
+                                <h3 class="kanban-column__title">Ideas</h3>
+                                <span class="kanban-column__count" id="ideasCount">0</span>
+                            </header>
+                            <div class="kanban-column__content" id="kanban-ideas" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <!-- Kanban items will be dynamically loaded here -->
+                            </div>
+                            <div class="kanban-add-card" onclick="showAddCardForm('ideas')">
+                                <span>+ Add a card</span>
+                            </div>
+                        </div>
+                        <div class="kanban-column">
+                            <header class="kanban-column__header">
+                                <h3 class="kanban-column__title">In Progress</h3>
+                                <span class="kanban-column__count" id="progressCount">0</span>
+                            </header>
+                            <div class="kanban-column__content" id="kanban-progress" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <!-- Kanban items will be dynamically loaded here -->
+                            </div>
+                            <div class="kanban-add-card" onclick="showAddCardForm('progress')">
+                                <span>+ Add a card</span>
+                            </div>
+                        </div>
+                        <div class="kanban-column">
+                            <header class="kanban-column__header">
+                                <h3 class="kanban-column__title">Done</h3>
+                                <span class="kanban-column__count" id="doneCount">0</span>
+                            </header>
+                            <div class="kanban-column__content" id="kanban-done" ondrop="drop(event)" ondragover="allowDrop(event)">
+                                <!-- Kanban items will be dynamically loaded here -->
+                            </div>
+                            <div class="kanban-add-card" onclick="showAddCardForm('done')">
+                                <span>+ Add a card</span>
+                            </div>
+                        </div>
                     </div>
-                    <input type="text" class="kanban-add-input" placeholder="Add task..." onkeypress="handleKanbanKeyPress(event, 'progress')">
-                </div>
-                <div class="kanban-column">
-                    <div class="kanban-header kanban-done">Done</div>
-                    <div class="kanban-items" id="kanban-done" ondrop="drop(event)" ondragover="allowDrop(event)">
-                        <!-- Kanban items will be dynamically loaded here -->
-                    </div>
-                    <input type="text" class="kanban-add-input" placeholder="Add completed..." onkeypress="handleKanbanKeyPress(event, 'done')">
                 </div>
             </div>
-        </div>
+
+            <div class="dashboard__sidebar">
+                <!-- Todo List -->
+                <div class="card">
+                    <header class="card__header">
+                        <h2 class="card__title">Todo List</h2>
+                        <span class="badge" id="todoCount">0</span>
+                    </header>
+                    <form class="todo-add-form" onsubmit="addTodo(event)">
+                        <input type="text" class="input todo-add-form__input" id="todoInput"
+                               placeholder="Add a new task..." required>
+                        <button type="submit" class="btn btn--primary btn--block">Add Task</button>
+                    </form>
+                    <div class="todo-list" id="todoList">
+                        <!-- Todos will be dynamically loaded here -->
+                    </div>
+                </div>
+
+                <!-- Quick Navigation -->
+                <div class="card">
+                    <header class="card__header">
+                        <h2 class="card__title">Quick Access</h2>
+                    </header>
+                    <div class="card__content">
+                        <a href="calculator.html" class="btn btn--secondary btn--block btn--with-icon">
+                            <span>🧮</span>
+                            Production Calculator
+                        </a>
+                        <a href="map.html" class="btn btn--secondary btn--block btn--with-icon">
+                            <span>🗺️</span>
+                            Interactive Map
+                        </a>
+                    </div>
+                </div>
+            </div>
+        </section>
     </div>
+</main>
 
-    <!-- Calculator Page (Placeholder) -->
-    <div id="calculator" class="page">
-        <h1 class="text-center">Production Calculator</h1>
-        <div class="card">
-            <p class="text-center">Calculator functionality coming soon...</p>
-        </div>
-    </div>
-
-    <!-- Devices Page (Placeholder) -->
-    <div id="devices" class="page">
-        <h1 class="text-center">Device Database</h1>
-        <div class="card">
-            <p class="text-center">Device database coming soon...</p>
-        </div>
-    </div>
-
-    <!-- Map Page (Placeholder) -->
-    <div id="map" class="page">
-        <h1 class="text-center">Interactive Map</h1>
-        <div class="card">
-            <p class="text-center">Interactive map coming soon...</p>
-        </div>
-    </div>
-</div>
-
-<script>
-    // === GLOBAL STATE ===
-    let appState = {
-        resources: {},
-        todos: [],
-        kanbanItems: {
-            ideas: [],
-            progress: [],
-            done: []
-        }
-    };
-
-    // === BASIC SATISFACTORY RESOURCES ===
-    const BASIC_RESOURCES = [
-        'Iron Ore', 'Copper Ore', 'Limestone', 'Coal', 'Oil', 'Caterium Ore',
-        'Raw Quartz', 'Sulfur', 'Bauxite', 'Uranium', 'Iron Ingot', 'Copper Ingot',
-        'Steel Ingot', 'Aluminum Ingot', 'Concrete', 'Wire', 'Cable', 'Iron Plate',
-        'Iron Rod', 'Screw', 'Reinforced Iron Plate', 'Rotor', 'Modular Frame',
-        'Smart Plating', 'Versatile Framework', 'Automated Wiring'
-    ];
-
-    // === NAVIGATION ===
-    function showPage(pageId) {
-        // Hide all pages
-        document.querySelectorAll('.page').forEach(page => {
-            page.classList.remove('active');
-        });
-
-        // Show selected page
-        document.getElementById(pageId).classList.add('active');
-
-        // Update navigation
-        document.querySelectorAll('.nav-link').forEach(link => {
-            link.classList.remove('active');
-        });
-        document.querySelector(`[data-page="${pageId}"]`).classList.add('active');
-    }
-
-    // === RESOURCE TRACKER ===
-    function initializeResources() {
-        const resourceGrid = document.getElementById('resourceGrid');
-        resourceGrid.innerHTML = '';
-
-        BASIC_RESOURCES.forEach(resource => {
-            if (!appState.resources[resource]) {
-                appState.resources[resource] = 0;
-            }
-
-            const resourceItem = document.createElement('div');
-            resourceItem.className = 'resource-item';
-            resourceItem.innerHTML = `
-                    <div class="resource-name">${resource}</div>
-                    <div class="resource-amount">
-                        <input type="number" value="${appState.resources[resource]}"
-                               onchange="updateResource('${resource}', this.value)"
-                               onclick="this.select()">
-                    </div>
-                `;
-            resourceGrid.appendChild(resourceItem);
-        });
-    }
-
-    function updateResource(resourceName, amount) {
-        appState.resources[resourceName] = parseInt(amount) || 0;
-        saveData();
-    }
-
-    function resetResources() {
-        if (confirm('Are you sure you want to reset all resource amounts?')) {
-            Object.keys(appState.resources).forEach(resource => {
-                appState.resources[resource] = 0;
-            });
-            initializeResources();
-            saveData();
-        }
-    }
-
-    // === TODO LIST ===
-    function addTodo() {
-        const input = document.getElementById('todoInput');
-        const text = input.value.trim();
-
-        if (text) {
-            const todo = {
-                id: Date.now(),
-                text: text,
-                completed: false,
-                createdAt: new Date().toISOString()
-            };
-
-            appState.todos.unshift(todo);
-            input.value = '';
-            renderTodos();
-            saveData();
-        }
-    }
-
-    function handleTodoKeyPress(event) {
-        if (event.key === 'Enter') {
-            addTodo();
-        }
-    }
-
-    function toggleTodo(id) {
-        const todo = appState.todos.find(t => t.id === id);
-        if (todo) {
-            todo.completed = !todo.completed;
-            renderTodos();
-            saveData();
-        }
-    }
-
-    function deleteTodo(id) {
-        appState.todos = appState.todos.filter(t => t.id !== id);
-        renderTodos();
-        saveData();
-    }
-
-    function renderTodos() {
-        const todoList = document.getElementById('todoList');
-        const todoCount = document.getElementById('todoCount');
-
-        todoList.innerHTML = '';
-        const activeTodos = appState.todos.filter(t => !t.completed).length;
-        todoCount.textContent = `${activeTodos} active tasks`;
-
-        appState.todos.forEach(todo => {
-            const todoItem = document.createElement('li');
-            todoItem.className = `todo-item ${todo.completed ? 'completed' : ''}`;
-            todoItem.innerHTML = `
-                    <input type="checkbox" ${todo.completed ? 'checked' : ''}
-                           onchange="toggleTodo(${todo.id})">
-                    <span class="todo-text">${todo.text}</span>
-                    <div class="todo-actions">
-                        <button class="btn btn-small btn-danger" onclick="deleteTodo(${todo.id})">Delete</button>
-                    </div>
-                `;
-            todoList.appendChild(todoItem);
-        });
-    }
-
-    // === KANBAN BOARD ===
-    function addKanbanItem(column, text) {
-        if (text.trim()) {
-            const item = {
-                id: Date.now(),
-                text: text.trim(),
-                column: column,
-                createdAt: new Date().toISOString()
-            };
-
-            appState.kanbanItems[column].push(item);
-            renderKanban();
-            saveData();
-        }
-    }
-
-    function handleKanbanKeyPress(event, column) {
-        if (event.key === 'Enter') {
-            addKanbanItem(column, event.target.value);
-            event.target.value = '';
-        }
-    }
-
-    function renderKanban() {
-        Object.keys(appState.kanbanItems).forEach(column => {
-            const container = document.getElementById(`kanban-${column}`);
-            container.innerHTML = '';
-
-            appState.kanbanItems[column].forEach(item => {
-                const itemElement = document.createElement('div');
-                itemElement.className = 'kanban-item';
-                itemElement.draggable = true;
-                itemElement.dataset.itemId = item.id;
-                itemElement.dataset.column = column;
-                itemElement.innerHTML = `
-                        ${item.text}
-                        <button class="btn btn-small btn-danger" style="float: right; margin-top: 0.5rem;"
-                                onclick="deleteKanbanItem('${column}', ${item.id})">×</button>
-                    `;
-                itemElement.addEventListener('dragstart', dragStart);
-                container.appendChild(itemElement);
-            });
-        });
-    }
-
-    function deleteKanbanItem(column, id) {
-        appState.kanbanItems[column] = appState.kanbanItems[column].filter(item => item.id !== id);
-        renderKanban();
-        saveData();
-    }
-
-    // === DRAG AND DROP ===
-    let draggedItem = null;
-
-    function dragStart(event) {
-        draggedItem = event.target;
-        event.target.classList.add('dragging');
-    }
-
-    function allowDrop(event) {
-        event.preventDefault();
-    }
-
-    function drop(event) {
-        event.preventDefault();
-
-        if (draggedItem) {
-            const targetColumn = event.currentTarget.id.replace('kanban-', '');
-            const sourceColumn = draggedItem.dataset.column;
-            const itemId = parseInt(draggedItem.dataset.itemId);
-
-            if (sourceColumn !== targetColumn) {
-                // Find and move the item
-                const itemIndex = appState.kanbanItems[sourceColumn].findIndex(item => item.id === itemId);
-                if (itemIndex !== -1) {
-                    const item = appState.kanbanItems[sourceColumn].splice(itemIndex, 1)[0];
-                    item.column = targetColumn;
-                    appState.kanbanItems[targetColumn].push(item);
-
-                    renderKanban();
-                    saveData();
-                }
-            }
-
-            draggedItem.classList.remove('dragging');
-            draggedItem = null;
-        }
-    }
-
-    // === DATA PERSISTENCE ===
-    function saveData() {
-        try {
-            const data = JSON.stringify(appState);
-            // Note: Using a simple object storage since localStorage isn't available
-            window.appData = data;
-        } catch (error) {
-            console.warn('Could not save data:', error);
-        }
-    }
-
-    function loadData() {
-        try {
-            if (window.appData) {
-                const loaded = JSON.parse(window.appData);
-                appState = { ...appState, ...loaded };
-            }
-        } catch (error) {
-            console.warn('Could not load data:', error);
-        }
-    }
-
-    // === INITIALIZATION ===
-    function initializeApp() {
-        loadData();
-        initializeResources();
-        renderTodos();
-        renderKanban();
-    }
-
-    // Initialize the app when the page loads
-    document.addEventListener('DOMContentLoaded', initializeApp);
-</script>
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script src="js/dashboard.js"></script>
+<script src="js/app.js"></script>
 </body>
 </html>
