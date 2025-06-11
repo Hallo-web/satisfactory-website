@@ -1,0 +1,167 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satisfactory Helper - Map</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__container">
+        <a href="index.html" class="nav__logo">
+            <span class="nav__logo-icon">⚙️</span>
+            Satisfactory Helper
+        </a>
+        <ul class="nav__links">
+            <li><a href="index.html" class="nav__link">Dashboard</a></li>
+            <li><a href="calculator.html" class="nav__link">Calculator</a></li>
+            <li><a href="map.html" class="nav__link nav__link--active">Map</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+    <div class="container">
+        <header class="page-header">
+            <h1 class="page-title">Interactive Map</h1>
+            <p class="page-subtitle">Explore resource nodes and plan your factory locations</p>
+        </header>
+
+        <div class="map-container">
+            <!-- Map Controls -->
+            <div class="map-controls">
+                <div class="card">
+                    <header class="card__header">
+                        <h3 class="card__title">Map Controls</h3>
+                    </header>
+                    <div class="card__content">
+                        <div class="form-group">
+                            <label class="label">Layer Options</label>
+                            <div class="checkbox-group">
+                                <label class="checkbox">
+                                    <input type="checkbox" id="showResourceNodes" checked>
+                                    <span class="checkbox__mark"></span>
+                                    Resource Nodes
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="showFactories">
+                                    <span class="checkbox__mark"></span>
+                                    My Factories
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="showPowerLines">
+                                    <span class="checkbox__mark"></span>
+                                    Power Lines
+                                </label>
+                                <label class="checkbox">
+                                    <input type="checkbox" id="showBelts">
+                                    <span class="checkbox__mark"></span>
+                                    Belt Networks
+                                </label>
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label" for="resourceFilter">Filter Resources</label>
+                            <select class="select" id="resourceFilter">
+                                <option value="all">All Resources</option>
+                                <option value="iron">Iron Ore</option>
+                                <option value="copper">Copper Ore</option>
+                                <option value="limestone">Limestone</option>
+                                <option value="coal">Coal</option>
+                                <option value="oil">Oil</option>
+                                <option value="caterium">Caterium Ore</option>
+                                <option value="quartz">Raw Quartz</option>
+                                <option value="sulfur">Sulfur</option>
+                                <option value="bauxite">Bauxite</option>
+                                <option value="uranium">Uranium</option>
+                            </select>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="label">Map Actions</label>
+                            <button class="btn btn--secondary btn--block" onclick="centerMap()">Center Map</button>
+                            <button class="btn btn--secondary btn--block" onclick="saveMapState()">Save View</button>
+                            <button class="btn btn--secondary btn--block" onclick="exportMap()">Export Markers</button>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Resource Legend -->
+                <div class="card">
+                    <header class="card__header">
+                        <h3 class="card__title">Resource Legend</h3>
+                    </header>
+                    <div class="card__content">
+                        <div class="resource-legend">
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--iron"></span>
+                                <span>Iron Ore</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--copper"></span>
+                                <span>Copper Ore</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--limestone"></span>
+                                <span>Limestone</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--coal"></span>
+                                <span>Coal</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--oil"></span>
+                                <span>Oil</span>
+                            </div>
+                            <div class="legend-item">
+                                <span class="legend-marker legend-marker--caterium"></span>
+                                <span>Caterium Ore</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Map Display -->
+            <div class="map-display">
+                <div class="map-canvas" id="mapCanvas">
+                    <!-- Interactive map will be rendered here -->
+                    <div class="map-placeholder">
+                        <div class="map-placeholder__content">
+                            <span class="map-placeholder__icon">🗺️</span>
+                            <h3>Interactive Map Loading...</h3>
+                            <p>Resource nodes and factory locations will be displayed here</p>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Map Info Panel -->
+                <div class="map-info" id="mapInfo" style="display: none;">
+                    <div class="card">
+                        <header class="card__header">
+                            <h3 class="card__title" id="infoTitle">Node Information</h3>
+                            <button class="btn btn--sm btn--secondary" onclick="closeMapInfo()">×</button>
+                        </header>
+                        <div class="card__content" id="infoContent">
+                            <!-- Node/marker information will be displayed here -->
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script src="js/map.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>

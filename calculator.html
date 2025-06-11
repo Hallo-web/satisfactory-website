@@ -1,0 +1,172 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Satisfactory Helper - Calculator</title>
+    <link rel="stylesheet" href="css/index.css">
+    <link rel="stylesheet" href="css/components.css">
+    <link rel="stylesheet" href="css/pages.css">
+</head>
+<body>
+<!-- Navigation -->
+<nav class="nav">
+    <div class="nav__container">
+        <a href="index.html" class="nav__logo">
+            <span class="nav__logo-icon">⚙️</span>
+            Satisfactory Helper
+        </a>
+        <ul class="nav__links">
+            <li><a href="index.html" class="nav__link">Dashboard</a></li>
+            <li><a href="calculator.html" class="nav__link nav__link--active">Calculator</a></li>
+            <li><a href="map.html" class="nav__link">Map</a></li>
+        </ul>
+    </div>
+</nav>
+
+<!-- Main Content -->
+<main class="main">
+    <div class="container calculator">
+        <header class="page-header">
+            <h1 class="page-title">Production Calculator</h1>
+            <p class="page-subtitle">Calculate optimal production chains and resource requirements</p>
+        </header>
+
+        <!-- Calculator Tabs -->
+        <div class="tabs calculator__tabs">
+            <button class="tab tab--active" onclick="switchTab('production')">Production Calculator</button>
+            <button class="tab" onclick="switchTab('power')">Power Calculator</button>
+            <button class="tab" onclick="switchTab('belt')">Belt Calculator</button>
+        </div>
+
+        <!-- Production Calculator Tab -->
+        <div id="production-tab" class="tab-content tab-content--active">
+            <form class="calculator__form" onsubmit="calculateProduction(event)">
+                <div class="calculator__form-row">
+                    <div class="form-group">
+                        <label class="label" for="targetItem">Target Item</label>
+                        <select class="select" id="targetItem" required>
+                            <option value="">Select an item...</option>
+                            <option value="iron-plate">Iron Plate</option>
+                            <option value="iron-rod">Iron Rod</option>
+                            <option value="wire">Wire</option>
+                            <option value="cable">Cable</option>
+                            <option value="concrete">Concrete</option>
+                            <option value="screw">Screw</option>
+                            <option value="reinforced-iron-plate">Reinforced Iron Plate</option>
+                            <option value="rotor">Rotor</option>
+                            <option value="modular-frame">Modular Frame</option>
+                            <option value="smart-plating">Smart Plating</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="targetRate">Target Rate (per minute)</label>
+                        <input type="number" class="input" id="targetRate" min="0" step="0.1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="recipe">Recipe</label>
+                        <select class="select" id="recipe">
+                            <option value="default">Default Recipe</option>
+                            <option value="alternate">Alternate Recipe</option>
+                        </select>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn--primary">Calculate</button>
+            </form>
+
+            <div id="productionResults" class="calculator__results" style="display: none;">
+                <h3 class="calculator__results-title">
+                    <span>📊</span>
+                    Production Requirements
+                </h3>
+                <div class="calculator__results-grid" id="resultsGrid">
+                    <!-- Results will be displayed here -->
+                </div>
+
+                <!-- Production Chain -->
+                <div class="production-chain" id="productionChain">
+                    <!-- Production steps will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Power Calculator Tab -->
+        <div id="power-tab" class="tab-content">
+            <form class="calculator__form" onsubmit="calculatePower(event)">
+                <div class="calculator__form-row">
+                    <div class="form-group">
+                        <label class="label" for="powerBuilding">Building Type</label>
+                        <select class="select" id="powerBuilding" required>
+                            <option value="">Select building...</option>
+                            <option value="biomass-burner">Biomass Burner</option>
+                            <option value="coal-generator">Coal Generator</option>
+                            <option value="fuel-generator">Fuel Generator</option>
+                            <option value="nuclear-power-plant">Nuclear Power Plant</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="buildingCount">Number of Buildings</label>
+                        <input type="number" class="input" id="buildingCount" min="1" required>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="targetPower">Target Power (MW)</label>
+                        <input type="number" class="input" id="targetPower" min="0" step="0.1">
+                    </div>
+                </div>
+                <button type="submit" class="btn btn--primary">Calculate Power</button>
+            </form>
+
+            <div id="powerResults" class="calculator__results" style="display: none;">
+                <h3 class="calculator__results-title">
+                    <span>⚡</span>
+                    Power Requirements
+                </h3>
+                <div class="calculator__results-grid" id="powerResultsGrid">
+                    <!-- Power results will be displayed here -->
+                </div>
+            </div>
+        </div>
+
+        <!-- Belt Calculator Tab -->
+        <div id="belt-tab" class="tab-content">
+            <form class="calculator__form" onsubmit="calculateBelt(event)">
+                <div class="calculator__form-row">
+                    <div class="form-group">
+                        <label class="label" for="beltType">Belt Type</label>
+                        <select class="select" id="beltType" required>
+                            <option value="">Select belt type...</option>
+                            <option value="mk1">Conveyor Belt Mk.1 (60/min)</option>
+                            <option value="mk2">Conveyor Belt Mk.2 (120/min)</option>
+                            <option value="mk3">Conveyor Belt Mk.3 (270/min)</option>
+                            <option value="mk4">Conveyor Belt Mk.4 (480/min)</option>
+                            <option value="mk5">Conveyor Belt Mk.5 (780/min)</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label class="label" for="itemRate">Item Rate (per minute)</label>
+                        <input type="number" class="input" id="itemRate" min="0" step="0.1" required>
+                    </div>
+                </div>
+                <button type="submit" class="btn btn--primary">Calculate Belts</button>
+            </form>
+
+            <div id="beltResults" class="calculator__results" style="display: none;">
+                <h3 class="calculator__results-title">
+                    <span>🔗</span>
+                    Belt Requirements
+                </h3>
+                <div class="calculator__results-grid" id="beltResultsGrid">
+                    <!-- Belt results will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </div>
+</main>
+
+<!-- Scripts -->
+<script src="js/data.js"></script>
+<script src="js/components.js"></script>
+<script src="js/calculator.js"></script>
+<script src="js/app.js"></script>
+</body>
+</html>
